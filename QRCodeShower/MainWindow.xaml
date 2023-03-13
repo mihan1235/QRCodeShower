@@ -7,29 +7,59 @@
         mc:Ignorable="d"
         Name="MainWindow1"
         Title="QRCodeShower" Height="450" Width="800">
-    <StackPanel>
-        <Menu Height="13pt">
+    <Window.CommandBindings>
+        <CommandBinding 
+            CanExecute="CanOpenFolder"
+            Executed="OpenFolder"
+            Command="ApplicationCommands.Open"></CommandBinding>
+        <CommandBinding 
+            CanExecute="CanPlaySlideShow"
+            Executed="PlaySlideShow"
+            Command="MediaCommands.Play"></CommandBinding>
+        <CommandBinding 
+            CanExecute="CanPauseSlideShow"
+            Executed="PauseSlideShow"
+            Command="MediaCommands.Pause"></CommandBinding>
+        <CommandBinding 
+            CanExecute="CanStopSlideShow"
+            Executed="StopSlideShow"
+            Command="MediaCommands.Stop"></CommandBinding>
+    </Window.CommandBindings>
+    <DockPanel>
+        <Menu Height="13pt" DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Open"></MenuItem>
+                <MenuItem Command="ApplicationCommands.Open"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="SlideShow">
+                <MenuItem Command="MediaCommands.Play"></MenuItem>
+                <MenuItem Command="MediaCommands.Pause"></MenuItem>
+                <MenuItem Command="MediaCommands.Stop"></MenuItem>
             </MenuItem>
         </Menu>
         <Grid ShowGridLines="True" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
-                <RowDefinition MinHeight="300"></RowDefinition>
+                <RowDefinition ></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="0.5*"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <!--<TreeView Grid.Row="0" Grid.Column="0" MinHeight="{Binding ElementName=MainWindow1, Path=ActualHeight}">-->
-                <Button Grid.Row="0" Grid.Column="0" MinHeight="{Binding ElementName=MainWindow1, Path=ActualHeight}">
-
-                </Button>
+                <TreeView Grid.Row="0" Grid.Column="0" Name="FilesTree">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type local:FileTreeItem}" ItemsSource="{Binding Items}">
+                            <TextBlock Text="{Binding FileName}" />
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
             </ScrollViewer>
             <GridSplitter Grid.Row="0" Grid.Column="1" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
                           Background="Aqua"></GridSplitter>
+            <Image Name="ImageObject" Grid.Row="0" Grid.Column="2"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Source="{Binding ElementName=FilesTree, Path=SelectedItem.Source, Mode=OneWay}"></Image>
         </Grid>
-    </StackPanel>
+    </DockPanel>
 </Window>
