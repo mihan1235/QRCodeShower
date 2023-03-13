@@ -8,4 +8,14 @@
     <UseWindowsForms>True</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="resources\EmptyImg.jpg" />
+    <None Remove="resources\qr-scanner_icon-icons.com_50056.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="resources\EmptyImg.jpg" />
+    <Resource Include="resources\qr-scanner_icon-icons.com_50056.ico" />
+  </ItemGroup>
+
 </Project>

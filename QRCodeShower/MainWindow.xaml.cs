@@ -30,6 +30,12 @@ namespace QRCodeShower
         public MainWindow()
         {
             InitializeComponent();
+            ImageObject.Source = new BitmapImage(new Uri("pack://application:,,,/resources/EmptyImg.jpg"));
+
+            Uri iconUri = new Uri("pack://application:,,,/resources/qr-scanner_icon-icons.com_50056.ico",
+                UriKind.RelativeOrAbsolute);
+            this.Icon = BitmapFrame.Create(iconUri);
+
         }
 
         private void OpenFolder(object sender, ExecutedRoutedEventArgs e)
