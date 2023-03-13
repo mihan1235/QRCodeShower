@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="QRCoder" Version="1.4.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="resources\EmptyImg.jpg" />
     <Resource Include="resources\qr-scanner_icon-icons.com_50056.ico" />
   </ItemGroup>

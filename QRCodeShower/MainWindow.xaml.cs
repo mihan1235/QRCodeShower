@@ -1,7 +1,9 @@
 ﻿using Microsoft.Win32;
+using QRCoder;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,12 +32,17 @@ namespace QRCodeShower
         public MainWindow()
         {
             InitializeComponent();
-            ImageObject.Source = new BitmapImage(new Uri("pack://application:,,,/resources/EmptyImg.jpg"));
+            setDefaultImageSource();
 
             Uri iconUri = new Uri("pack://application:,,,/resources/qr-scanner_icon-icons.com_50056.ico",
                 UriKind.RelativeOrAbsolute);
             this.Icon = BitmapFrame.Create(iconUri);
 
+        }
+
+        private void setDefaultImageSource()
+        {
+            ImageObject.Source = new BitmapImage(new Uri("pack://application:,,,/resources/EmptyImg.jpg"));
         }
 
         private void OpenFolder(object sender, ExecutedRoutedEventArgs e)
@@ -92,6 +99,8 @@ namespace QRCodeShower
             {
                 var item = new FileTreeItem();
                 item.FileName = file.Name;
+                item.IsFile = true;
+                item.File = file;
                 items.Add(item);
             }
 
@@ -130,6 +139,54 @@ namespace QRCodeShower
 
         private void StopSlideShow(object sender, ExecutedRoutedEventArgs e)
         {
+        }
+
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
+        private async void FilesTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            try
+            {
+                var obj = FilesTree.SelectedItem as FileTreeItem;
+                if (obj != null && obj.IsFile && obj.File != null && obj.File.Exists)
+                {
+                    string fileText = await File.ReadAllTextAsync(obj.File.FullName);
+                    using var qrGenerator = new QRCodeGenerator();
+
+                    using var qrCodeData = qrGenerator.CreateQrCode(fileText, QRCodeGenerator.ECCLevel.M);
+                    //using var qrCodeData = qrGenerator.CreateQrCode(Base64Encode(fileText), QRCodeGenerator.ECCLevel.M);
+                    using QRCode qrCode = new QRCode(qrCodeData);
+                    //Bitmap qrCodeImage = qrCode.GetGraphic(120);
+                    Bitmap qrCodeImage = qrCode.GetGraphic(20);
+                    ImageObject.Source = BitmapToImageSource(qrCodeImage);
+                }
+                else setDefaultImageSource();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"FilesTree_SelectedItemChanged: {ex.Message}");
+                setDefaultImageSource();
+            }
+        }
+
+        BitmapImage BitmapToImageSource(Bitmap bitmap)
+        {
+            using (MemoryStream memory = new MemoryStream())
+            {
+                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+                memory.Position = 0;
+                BitmapImage bitmapimage = new BitmapImage();
+                bitmapimage.BeginInit();
+                bitmapimage.StreamSource = memory;
+                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapimage.EndInit();
+
+                return bitmapimage;
+            }
         }
     }
 }
