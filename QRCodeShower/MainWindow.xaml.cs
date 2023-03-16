@@ -28,6 +28,7 @@ namespace QRCodeShower
     public partial class MainWindow : Window
     {
         ObservableCollection<FileTreeItem> files = new ObservableCollection<FileTreeItem>();
+        BitMapImageList images = new BitMapImageList();
 
         public MainWindow()
         {
@@ -157,12 +158,30 @@ namespace QRCodeShower
                     string fileText = await File.ReadAllTextAsync(obj.File.FullName);
                     using var qrGenerator = new QRCodeGenerator();
 
-                    using var qrCodeData = qrGenerator.CreateQrCode(fileText, QRCodeGenerator.ECCLevel.M);
-                    //using var qrCodeData = qrGenerator.CreateQrCode(Base64Encode(fileText), QRCodeGenerator.ECCLevel.M);
-                    using QRCode qrCode = new QRCode(qrCodeData);
-                    //Bitmap qrCodeImage = qrCode.GetGraphic(120);
-                    Bitmap qrCodeImage = qrCode.GetGraphic(20);
-                    ImageObject.Source = BitmapToImageSource(qrCodeImage);
+                    var fileTextBytes = System.Text.Encoding.UTF8.GetBytes(fileText).Chunk(2000);
+                    images.Clear();
+                    foreach(var chunck in fileTextBytes)
+                    {
+                        using var qrCodeData = qrGenerator.CreateQrCode(chunck, QRCodeGenerator.ECCLevel.M);
+                        //using var qrCodeData = qrGenerator.CreateQrCode(Base64Encode(fileText), QRCodeGenerator.ECCLevel.M);
+                        using QRCode qrCode = new QRCode(qrCodeData);
+                        //Bitmap qrCodeImage = qrCode.GetGraphic(120);
+                        Bitmap qrCodeImage = qrCode.GetGraphic(20);
+                        images.Add(BitmapToImageSource(qrCodeImage));
+                    }
+
+                    ImageObject.Source = images.GetPrev(); //Get first element
+                    if (images.Count > 1)
+                    {
+                        ButtonsWrap.Visibility = Visibility.Visible;
+                        PrevButton.IsEnabled = false;
+                        NextButton.IsEnabled = true;
+                    }else
+                    {
+                        ButtonsWrap.Visibility = Visibility.Collapsed;
+                        PrevButton.IsEnabled = false;
+                        NextButton.IsEnabled = false;
+                    }
                 }
                 else setDefaultImageSource();
             }
@@ -187,6 +206,32 @@ namespace QRCodeShower
 
                 return bitmapimage;
             }
+        }
+
+        private void PrevButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!images.IsFirst) ImageObject.Source = images.GetPrev();
+            else
+                PrevButton.IsEnabled = false;
+
+            if (!images.IsLast)
+                NextButton.IsEnabled = true;
+
+            if (images.IsFirst)
+                PrevButton.IsEnabled = false;
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!images.IsLast) ImageObject.Source = images.GetNext();
+            else
+                NextButton.IsEnabled = false;
+
+            if (!images.IsFirst)
+                PrevButton.IsEnabled = true;
+            
+            if (images.IsLast)
+                NextButton.IsEnabled = false;
         }
     }
 }

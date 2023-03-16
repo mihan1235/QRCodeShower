@@ -43,7 +43,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
                 <TreeView Grid.Row="0" Grid.Column="0" Name="FilesTree" SelectedItemChanged="FilesTree_SelectedItemChanged">
                     <TreeView.ItemTemplate>
@@ -54,10 +54,20 @@
                 </TreeView>
             <GridSplitter Grid.Row="0" Grid.Column="1" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
                           Background="Gray"></GridSplitter>
-            <Image Name="ImageObject" Grid.Row="0" Grid.Column="2"
+            <Border Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1" Grid.Row="0" Grid.Column="2">
+                <DockPanel >
+                    <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Name="ButtonsWrap" Visibility="Collapsed">
+                        <Button Margin="7,2,7,2" Name="PrevButton" IsEnabled="False" Click="PrevButton_Click">Prev</Button>
+                        <Button Margin="7,2,7,2" Name="NextButton" IsEnabled="False" Click="NextButton_Click">Next</Button>
+                    </WrapPanel>
+                    <Image Name="ImageObject" 
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
+                           MinWidth="300px"
                    ></Image>
+                        
+                </DockPanel>
+            </Border>
         </Grid>
     </DockPanel>
 </Window>
