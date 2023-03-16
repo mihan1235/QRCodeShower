@@ -14,6 +14,11 @@ namespace QRCodeShower
         private List<BitmapImage> images = new List<BitmapImage>();
         private int position = 0;
 
+        public int Position
+        {
+            get { return position; }
+        }
+
         public bool IsLast
         {
             get

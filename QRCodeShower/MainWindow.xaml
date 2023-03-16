@@ -56,10 +56,15 @@
                           Background="Gray"></GridSplitter>
             <Border Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1" Grid.Row="0" Grid.Column="2">
                 <DockPanel >
-                    <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Name="ButtonsWrap" Visibility="Collapsed">
-                        <Button Margin="7,2,7,2" Name="PrevButton" IsEnabled="False" Click="PrevButton_Click">Prev</Button>
-                        <Button Margin="7,2,7,2" Name="NextButton" IsEnabled="False" Click="NextButton_Click">Next</Button>
-                    </WrapPanel>
+                    <DockPanel DockPanel.Dock="Bottom">
+                        <TextBlock DockPanel.Dock="Right" Visibility="Collapsed" Name="ImagesPosition"></TextBlock>
+                        <WrapPanel  HorizontalAlignment="Center" Name="ButtonsWrap" Visibility="Collapsed">
+                            <Button Margin="7,2,7,2" Name="PrevButton" IsEnabled="False" Click="PrevButton_Click">Prev</Button>
+                            <Button Margin="7,2,7,2" Name="NextButton" IsEnabled="False" Click="NextButton_Click">Next</Button>
+
+                        </WrapPanel>
+                    </DockPanel>
+                    
                     <Image Name="ImageObject" 
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"

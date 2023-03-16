@@ -160,7 +160,7 @@ namespace QRCodeShower
 
                     var fileTextBytes = System.Text.Encoding.UTF8.GetBytes(fileText).Chunk(2000);
                     images.Clear();
-                    foreach(var chunck in fileTextBytes)
+                    foreach (var chunck in fileTextBytes)
                     {
                         using var qrCodeData = qrGenerator.CreateQrCode(chunck, QRCodeGenerator.ECCLevel.M);
                         //using var qrCodeData = qrGenerator.CreateQrCode(Base64Encode(fileText), QRCodeGenerator.ECCLevel.M);
@@ -176,11 +176,15 @@ namespace QRCodeShower
                         ButtonsWrap.Visibility = Visibility.Visible;
                         PrevButton.IsEnabled = false;
                         NextButton.IsEnabled = true;
-                    }else
+                        ImagesPosition.Visibility = Visibility.Visible;
+                        ImagesPosition.Text = $"{images.Position + 1}/{images.Count}";
+                    }
+                    else
                     {
                         ButtonsWrap.Visibility = Visibility.Collapsed;
                         PrevButton.IsEnabled = false;
                         NextButton.IsEnabled = false;
+                        ImagesPosition.Visibility = Visibility.Collapsed;
                     }
                 }
                 else setDefaultImageSource();
@@ -210,7 +214,11 @@ namespace QRCodeShower
 
         private void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!images.IsFirst) ImageObject.Source = images.GetPrev();
+            if (!images.IsFirst)
+            {
+                ImageObject.Source = images.GetPrev();
+                ImagesPosition.Text = $"{images.Position + 1}/{images.Count}";
+            }
             else
                 PrevButton.IsEnabled = false;
 
@@ -223,13 +231,17 @@ namespace QRCodeShower
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!images.IsLast) ImageObject.Source = images.GetNext();
+            if (!images.IsLast)
+            {
+                ImageObject.Source = images.GetNext();
+                ImagesPosition.Text = $"{images.Position + 1}/{images.Count}";
+            }
             else
                 NextButton.IsEnabled = false;
 
             if (!images.IsFirst)
                 PrevButton.IsEnabled = true;
-            
+
             if (images.IsLast)
                 NextButton.IsEnabled = false;
         }
