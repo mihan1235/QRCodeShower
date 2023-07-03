@@ -156,19 +156,12 @@ namespace QRCodeShower
                 if (obj != null && obj.IsFile && obj.File != null && obj.File.Exists)
                 {
                     string fileText = await File.ReadAllTextAsync(obj.File.FullName);
-                    using var qrGenerator = new QRCodeGenerator();
+                    
 
-                    var fileTextBytes = System.Text.Encoding.UTF8.GetBytes(fileText).Chunk(2000);
+                    var fileTextBytes = System.Text.Encoding.UTF8.GetBytes(fileText).Chunk(1500);
                     images.Clear();
-                    foreach (var chunck in fileTextBytes)
-                    {
-                        using var qrCodeData = qrGenerator.CreateQrCode(chunck, QRCodeGenerator.ECCLevel.M);
-                        //using var qrCodeData = qrGenerator.CreateQrCode(Base64Encode(fileText), QRCodeGenerator.ECCLevel.M);
-                        using QRCode qrCode = new QRCode(qrCodeData);
-                        //Bitmap qrCodeImage = qrCode.GetGraphic(120);
-                        Bitmap qrCodeImage = qrCode.GetGraphic(20);
-                        images.Add(BitmapToImageSource(qrCodeImage));
-                    }
+                    images.Add(fileTextBytes);
+                    
 
                     ImageObject.Source = images.GetPrev(); //Get first element
                     if (images.Count > 1)
@@ -196,21 +189,7 @@ namespace QRCodeShower
             }
         }
 
-        BitmapImage BitmapToImageSource(Bitmap bitmap)
-        {
-            using (MemoryStream memory = new MemoryStream())
-            {
-                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                memory.Position = 0;
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
-
-                return bitmapimage;
-            }
-        }
+       
 
         private void PrevButton_Click(object sender, RoutedEventArgs e)
         {
